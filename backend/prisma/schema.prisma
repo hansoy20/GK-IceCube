@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PACKED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  COD
+  CARD
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id           String    @id @default(uuid())
+  name         String
+  email        String    @unique
+  passwordHash String
+  phone        String?
+  role         Role      @default(CUSTOMER)
+  addresses    Address[]
+  orders       Order[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Address {
+  id         String  @id @default(uuid())
+  userId     String
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label      String  @default("Home")
+  line1      String
+  line2      String?
+  city       String
+  region     String?
+  postalCode String?
+  isDefault  Boolean @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Product {
+  id            String         @id @default(uuid())
+  name          String
+  slug          String         @unique
+  description   String?
+  category      String         @default("Cube Ice")
+  sizeLabel     String
+  pricePerKg    Decimal        @map("price") @db.Decimal(10, 2)
+  imageUrl      String?
+  isActive      Boolean        @default(true)
+  inventory     Inventory?
+  orderItems    OrderItem[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Inventory {
+  id                String   @id @default(uuid())
+  productId         String   @unique
+  product             Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  stockKg             Decimal  @map("quantityOnHand") @db.Decimal(10, 2) @default(0)
+  lowStockThresholdKg Decimal  @map("lowStockThreshold") @db.Decimal(10, 2) @default(20)
+  updatedAt           DateTime @updatedAt
+  movements         StockMovement[]
+}
+
+model StockMovement {
+  id          String    @id @default(uuid())
+  inventoryId String
+  inventory   Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  changeKg    Decimal   @map("change") @db.Decimal(10, 2)
+  reason      String
+  createdAt   DateTime  @default(now())
+}
+
+model Order {
+  id              String        @id @default(uuid())
+  orderNumber     String        @unique
+  userId          String?
+  user            User?         @relation(fields: [userId], references: [id])
+  customerName    String
+  customerEmail   String
+  status          OrderStatus   @default(PENDING)
+  paymentMethod   PaymentMethod @default(COD)
+  paymentStatus   PaymentStatus @default(UNPAID)
+  stripeSessionId String?
+  deliveryLine1   String
+  deliveryLine2   String?
+  deliveryCity    String
+  deliveryRegion  String?
+  deliveryPostal  String?
+  contactPhone    String
+  orderNotes      String?       @map("notes")
+  requestedDeliveryDate DateTime? @db.Date
+  subtotal        Decimal       @db.Decimal(10, 2)
+  deliveryFee     Decimal       @db.Decimal(10, 2) @default(0)
+  total           Decimal       @db.Decimal(10, 2)
+  items           OrderItem[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model OrderItem {
+  id          String   @id @default(uuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  productName String
+  unitPrice   Decimal  @db.Decimal(10, 2)
+  quantityKg  Decimal  @map("quantity") @db.Decimal(10, 2)
+  lineTotal   Decimal  @db.Decimal(10, 2)
+}
