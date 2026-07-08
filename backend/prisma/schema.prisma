@@ -114,6 +114,7 @@ model Order {
   contactPhone    String
   orderNotes      String?       @map("notes")
   requestedDeliveryDate DateTime? @db.Date
+  deliveryTime    String?
   subtotal        Decimal       @db.Decimal(10, 2)
   deliveryFee     Decimal       @db.Decimal(10, 2) @default(0)
   total           Decimal       @db.Decimal(10, 2)

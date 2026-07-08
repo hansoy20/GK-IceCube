@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import client from "../api/client";
+import client from "../../api/client";
 
 const DELIVERY_FEE = 5.0;
 
@@ -62,18 +62,6 @@ export default function OrderNow() {
       });
 
       const order = res.data;
-
-      if (form.paymentMethod === "CARD") {
-        try {
-          const session = await client.post(`/payments/checkout-session/${order.id}`);
-          window.location.href = session.data.url;
-          return;
-        } catch (payErr) {
-          navigate(`/orders/${order.id}`);
-          return;
-        }
-      }
-
       navigate(`/orders/${order.id}`);
     } catch (err) {
       setError(err.message || "An error occurred during checkout.");
@@ -215,10 +203,10 @@ export default function OrderNow() {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="text-sm font-bold text-slate-500">Requested delivery date (optional)</label>
+              <label className="text-sm font-bold text-slate-500">Requested delivery date & time (optional)</label>
               <input
-                type="date"
-                min={new Date(Date.now() + 86400000).toISOString().split('T')[0]}
+                type="datetime-local"
+                min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
                 value={form.requestedDeliveryDate}
                 onChange={update("requestedDeliveryDate")}
                 className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 shadow-sm"
@@ -240,20 +228,12 @@ export default function OrderNow() {
           <div>
             <label className="text-sm font-bold text-slate-500">Payment method</label>
             <div className="mt-2 flex gap-3">
-              {["COD", "CARD"].map((method) => (
-                <button
-                  key={method}
-                  type="button"
-                  onClick={() => setForm((f) => ({ ...f, paymentMethod: method }))}
-                  className={`rounded-lg px-4 py-2 text-sm font-bold shadow-sm transition-colors ${
-                    form.paymentMethod === method
-                      ? "bg-slate-800 text-white"
-                      : "bg-white text-slate-500 border border-slate-200 hover:bg-slate-50"
-                  }`}
-                >
-                  {method === "COD" ? "Cash on delivery" : "Pay by card"}
-                </button>
-              ))}
+              <button
+                type="button"
+                className="rounded-lg px-4 py-2 text-sm font-bold shadow-sm transition-colors bg-slate-800 text-white"
+              >
+                Cash on delivery
+              </button>
             </div>
           </div>
 

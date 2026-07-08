@@ -109,11 +109,12 @@ export default function OrderDetail() {
                     <span className="text-slate-500">Requested Date</span>
                     <span className="font-600 text-sky-600 text-right">
                       {new Date(order.requestedDeliveryDate).toLocaleDateString("en-US", { 
-                        timeZone: "UTC", 
+                        timeZone: "UTC",
                         month: "short", 
                         day: "numeric", 
-                        year: "numeric" 
+                        year: "numeric"
                       })}
+                      {order.deliveryTime ? ` at ${order.deliveryTime}` : ""}
                     </span>
                   </div>
                 )}

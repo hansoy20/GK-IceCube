@@ -9,7 +9,7 @@ const orderRoutes = require("./routes/order.routes");
 const paymentRoutes = require("./routes/payment.routes");
 const adminRoutes = require("./routes/admin.routes");
 const { stripeWebhook } = require("./controllers/payment.controller");
-const { errorHandler, notFound } = require("./middleware/errorHandler");
+const { errorHandler, notFound } = require("./middleware/error.middleware");
 
 const app = express();
 

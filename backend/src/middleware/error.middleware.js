@@ -4,10 +4,8 @@ function errorHandler(err, req, res, next) {
   console.error(err);
 
   const status = err.status || 500;
-  const message =
-    status === 500 ? "Something went wrong on our end. Please try again." : err.message;
-
-  res.status(status).json({ message });
+  const message = err.message || "Something went wrong on our end. Please try again.";
+  res.status(status).json({ message, stack: err.stack });
 }
 
 function notFound(req, res) {

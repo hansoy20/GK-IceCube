@@ -62,13 +62,14 @@ async function appendOrderToSheet(order) {
         order.status,
         order.orderNotes || "",
         requestedDateStr,
+        order.deliveryTime || "",
         placedDateStr,
       ],
     ];
 
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: `${tabName}!A:L`,
+      range: `${tabName}!A:A`,
       valueInputOption: "USER_ENTERED",
       requestBody: { values },
     });

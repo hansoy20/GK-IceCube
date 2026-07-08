@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const prisma = require("../lib/prisma");
+const prisma = require("../lib/prisma.client");
 
 // Stripe is optional. If no key is configured, card payment is disabled
 // and the storefront only offers Cash on Delivery.
@@ -22,9 +22,13 @@ const createCheckoutSession = asyncHandler(async (req, res) => {
   });
 
   if (!order) return res.status(404).json({ message: "Order not found." });
-  if (order.userId !== req.user.id) {
+  
+  // If order belongs to a user, enforce that the logged-in user matches.
+  // If order.userId is null (guest checkout), allow it to proceed.
+  if (order.userId && (!req.user || order.userId !== req.user.id)) {
     return res.status(403).json({ message: "You don't have access to this order." });
   }
+
   if (order.paymentStatus === "PAID") {
     return res.status(400).json({ message: "This order has already been paid." });
   }

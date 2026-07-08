@@ -1,12 +1,12 @@
 import { Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import { RequireAuth, RequireAdmin } from "./components/ProtectedRoute";
-import AdminLayout from "./components/AdminLayout";
+import Navbar from "./components/common/Navbar";
+import Footer from "./components/common/Footer";
+import { RequireAdmin } from "./components/common/ProtectedRoute";
+import AdminLayout from "./components/admin/AdminLayout";
 
-import Home from "./pages/Home";
-import OrderNow from "./pages/OrderNow";
-import OrderConfirmation from "./pages/OrderConfirmation";
+import Home from "./pages/shop/Home";
+import OrderNow from "./pages/shop/OrderNow";
+import OrderConfirmation from "./pages/shop/OrderConfirmation";
 
 import AdminLogin from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";

@@ -1,8 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const { z } = require("zod");
-const prisma = require("../lib/prisma");
-const { signToken } = require("../utils/jwt");
+const prisma = require("../lib/prisma.client");
+const { signToken } = require("../utils/jwt.util");
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),

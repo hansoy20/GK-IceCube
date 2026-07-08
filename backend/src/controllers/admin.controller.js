@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const prisma = require("../lib/prisma");
+const prisma = require("../lib/prisma.client");
 
 // GET /api/admin/dashboard — headline numbers for the admin home screen
 const getDashboard = asyncHandler(async (req, res) => {
@@ -14,7 +14,7 @@ const getDashboard = asyncHandler(async (req, res) => {
     prisma.order.findMany({ where: { status: { not: "CANCELLED" } }, select: { total: true, createdAt: true } }),
   ]);
 
-  const lowStock = lowStockItems.filter((i) => i.quantityOnHand <= i.lowStockThreshold);
+  const lowStock = lowStockItems.filter((i) => Number(i.stockKg) <= Number(i.lowStockThresholdKg));
 
   const totalRevenue = allOrders.reduce((sum, o) => sum + Number(o.total), 0);
   const todayRevenue = allOrders
@@ -30,8 +30,8 @@ const getDashboard = asyncHandler(async (req, res) => {
     lowStockCount: lowStock.length,
     lowStockItems: lowStock.map((i) => ({
       productName: i.product.name,
-      quantityOnHand: i.quantityOnHand,
-      lowStockThreshold: i.lowStockThreshold,
+      stockKg: Number(i.stockKg),
+      lowStockThresholdKg: Number(i.lowStockThresholdKg),
     })),
   });
 });

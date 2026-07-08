@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const { z } = require("zod");
-const prisma = require("../lib/prisma");
+const prisma = require("../lib/prisma.client");
 
 function slugify(name) {
   return name
@@ -144,6 +144,13 @@ const toggleActive = asyncHandler(async (req, res) => {
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {
+  const linkedOrdersCount = await prisma.orderItem.count({ where: { productId: req.params.id } });
+  if (linkedOrdersCount > 0) {
+    return res.status(400).json({ 
+      message: "This product is linked to existing orders. Please toggle it to 'Inactive' instead of deleting it." 
+    });
+  }
+
   await prisma.product.delete({ where: { id: req.params.id } });
   res.json({ message: "Product deleted." });
 });

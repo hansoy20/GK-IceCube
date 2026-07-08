@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const prisma = require("../lib/prisma");
+const prisma = require("../lib/prisma.client");
 
 // GET /api/admin/inventory — stock level for every product
 const listInventory = asyncHandler(async (req, res) => {

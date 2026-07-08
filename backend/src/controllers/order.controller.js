@@ -1,10 +1,18 @@
 const asyncHandler = require("express-async-handler");
 const { z } = require("zod");
-const prisma = require("../lib/prisma");
+const prisma = require("../lib/prisma.client");
 const { appendOrderToSheet } = require("../services/sheets.service");
 
 const DELIVERY_FEE = 5.0; // flat delivery fee; swap for zone-based pricing later
 
+function formatTime(timeStr) {
+  if (!timeStr) return null;
+  const [hours, minutes] = timeStr.split(':');
+  const h = parseInt(hours, 10);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const displayH = h % 12 || 12;
+  return `${displayH}:${minutes} ${ampm}`;
+}
 function generateOrderNumber() {
   const stamp = Date.now().toString(36).toUpperCase();
   const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
@@ -33,8 +41,8 @@ const checkoutSchema = z.object({
     if (!val) return true;
     const today = new Date();
     const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
-    return val > todayUTC;
-  }, { message: "Delivery requires at least 1 day lead time." }),
+    return val >= todayUTC;
+  }, { message: "Delivery date cannot be in the past." }),
   paymentMethod: z.enum(["COD", "CARD"]).default("COD"),
 });
 
@@ -46,22 +54,49 @@ const createOrder = asyncHandler(async (req, res) => {
   }
   const data = parsed.data;
 
+  // 1. Fetch products outside the transaction to avoid N+1 queries during the transaction
+  const productIds = data.items.map(item => item.productId);
+  const products = await prisma.product.findMany({
+    where: { id: { in: productIds } },
+    include: { inventory: true },
+  });
+  const productMap = new Map(products.map(p => [p.id, p]));
+
+  // 2. Validate items and calculate totals outside the transaction
+  let subtotal = 0;
+  const itemsData = [];
+
+  for (const line of data.items) {
+    const product = productMap.get(line.productId);
+    if (!product || !product.isActive) {
+      return res.status(400).json({ message: "One of the items in your cart is no longer available." });
+    }
+
+    // Preliminary stock check (actual atomic check happens inside transaction)
+    if ((product.inventory?.stockKg ?? 0) < line.quantityKg) {
+      return res.status(400).json({ message: `Insufficient stock for "${product.name}". Only ${product.inventory?.stockKg ?? 0}kg available.` });
+    }
+
+    const unitPrice = Number(product.pricePerKg);
+    const lineTotal = unitPrice * line.quantityKg;
+    subtotal += lineTotal;
+
+    itemsData.push({
+      productId: product.id,
+      productName: product.name,
+      unitPrice,
+      quantityKg: line.quantityKg,
+      lineTotal,
+    });
+  }
+
+  const total = subtotal + DELIVERY_FEE;
+
+  // 3. Only keep the atomic write operations inside the transaction
   const order = await prisma.$transaction(async (tx) => {
-    let subtotal = 0;
-    const itemsData = [];
-
-    for (const line of data.items) {
-      const product = await tx.product.findUnique({
-        where: { id: line.productId },
-        include: { inventory: true },
-      });
-
-      if (!product || !product.isActive) {
-        throw Object.assign(new Error(`One of the items in your cart is no longer available.`), {
-          status: 400,
-        });
-      }
-
+    // Deduct stock concurrently
+    await Promise.all(data.items.map(async (line) => {
+      const product = productMap.get(line.productId);
       try {
         await tx.inventory.update({
           where: { 
@@ -84,21 +119,7 @@ const createOrder = asyncHandler(async (req, res) => {
         }
         throw err;
       }
-
-      const unitPrice = Number(product.pricePerKg);
-      const lineTotal = unitPrice * line.quantityKg;
-      subtotal += lineTotal;
-
-      itemsData.push({
-        productId: product.id,
-        productName: product.name,
-        unitPrice,
-        quantityKg: line.quantityKg,
-        lineTotal,
-      });
-    }
-
-    const total = subtotal + DELIVERY_FEE;
+    }));
 
     return tx.order.create({
       data: {
@@ -115,6 +136,7 @@ const createOrder = asyncHandler(async (req, res) => {
         contactPhone: data.contactPhone,
         orderNotes: data.orderNotes,
         requestedDeliveryDate: data.requestedDeliveryDate,
+        deliveryTime: req.body.requestedDeliveryDate ? formatTime(req.body.requestedDeliveryDate.split("T")[1]) : null,
         subtotal,
         deliveryFee: DELIVERY_FEE,
         total,

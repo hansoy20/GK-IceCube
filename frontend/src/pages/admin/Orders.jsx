@@ -71,8 +71,8 @@ export default function AdminOrders() {
                     </p>
                   </td>
                   <td className="px-6 py-4 text-slate-700">
-                    <p className="font-500">{order.user?.name}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{order.user?.phone}</p>
+                    <p className="font-500">{order.customerName}</p>
+                    <p className="text-xs text-slate-400 mt-0.5">{order.contactPhone}</p>
                   </td>
                   <td className="px-6 py-4 font-mono font-600 text-slate-700">₱{Number(order.total).toFixed(2)}</td>
                   <td className="px-6 py-4 text-slate-600">

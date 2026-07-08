@@ -16,7 +16,7 @@ export default {
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],
-        display: ["Inter", "sans-serif"],
+        display: ["Space Grotesk", "sans-serif"],
       },
       boxShadow: {
         sm: "0 1px 2px 0 rgba(14, 165, 233, 0.05)",
