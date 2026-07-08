@@ -32,7 +32,7 @@ const checkoutSchema = z.object({
   customerEmail: z.string().email("Enter a valid email address."),
   deliveryLine1: z.string().min(3, "Enter a delivery address."),
   deliveryLine2: z.string().optional(),
-  deliveryCity: z.string().min(2, "City is required."),
+  deliveryCity: z.string().optional().default(""),
   deliveryRegion: z.string().optional(),
   deliveryPostal: z.string().optional(),
   contactPhone: z.string().min(6, "Enter a contact phone number."),

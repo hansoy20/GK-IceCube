@@ -88,21 +88,9 @@ export default function OrderDetail() {
                 </div>
               </div>
               <div className="space-y-4 text-sm">
-                <div className="flex justify-between border-b border-slate-50 pb-3">
+                <div className={`flex justify-between ${(order.requestedDeliveryDate || order.orderNotes) ? 'border-b border-slate-50 pb-3' : 'pb-1'}`}>
                   <span className="text-slate-500">Address Line</span>
                   <span className="font-600 text-slate-700 text-right">{order.deliveryLine1}</span>
-                </div>
-                <div className="flex justify-between border-b border-slate-50 pb-3">
-                  <span className="text-slate-500">Flat / Building Name</span>
-                  <span className="font-600 text-slate-700 text-right">{order.deliveryLine2 || "-"}</span>
-                </div>
-                <div className="flex justify-between border-b border-slate-50 pb-3">
-                  <span className="text-slate-500">City / Region</span>
-                  <span className="font-600 text-slate-700 text-right">{order.deliveryCity}, {order.deliveryRegion}</span>
-                </div>
-                <div className={`flex justify-between ${(order.requestedDeliveryDate || order.orderNotes) ? 'border-b border-slate-50 pb-3' : 'pb-1'}`}>
-                  <span className="text-slate-500">Postcode</span>
-                  <span className="font-600 text-slate-700 text-right">{order.deliveryPostal || "-"}</span>
                 </div>
                 {order.requestedDeliveryDate && (
                   <div className={`flex justify-between ${order.orderNotes ? 'border-b border-slate-50 pb-3' : 'pb-1'}`}>

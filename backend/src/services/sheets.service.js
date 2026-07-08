@@ -26,15 +26,7 @@ async function appendOrderToSheet(order) {
 
     const sheets = google.sheets({ version: "v4", auth });
 
-    const address = [
-      order.deliveryLine1,
-      order.deliveryLine2,
-      order.deliveryCity,
-      order.deliveryRegion,
-      order.deliveryPostal,
-    ]
-      .filter(Boolean)
-      .join(", ");
+    const address = order.deliveryLine1 || "";
 
     // For a multi-item order, calculate total quantity and format total
     const quantityKg = order.items?.reduce((acc, item) => acc + Number(item.quantityKg), 0) || 0;

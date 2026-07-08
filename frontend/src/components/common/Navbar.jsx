@@ -1,8 +1,8 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
 const navLinkClass = ({ isActive }) =>
-  `text-sm font-semibold transition-colors ${
-    isActive ? "text-primary" : "text-secondary/70 hover:text-primary"
+  `group relative py-1 text-sm font-medium transition-all duration-200 ${
+    isActive ? "text-primary font-bold active" : "text-neutral-body hover:text-primary"
   }`;
 
 export default function Navbar() {
@@ -10,14 +10,13 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="h-2 w-full bg-primary" />
-      <header className="sticky top-0 z-40 border-b border-white/20 bg-white/60 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           {/* Left: Logo & Links */}
           <div className="flex items-center gap-8">
             <Link 
               to="/" 
-              className="flex items-center gap-2 font-display text-xl font-bold text-secondary tracking-tight"
+              className="flex items-center gap-2 font-heading text-xl font-bold text-neutral-heading tracking-tight"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
               <span className="grid h-7 w-7 grid-cols-2 gap-0.5">
@@ -26,7 +25,7 @@ export default function Navbar() {
                 <span className="bg-primary/60 rounded-[2px]" />
                 <span className="bg-primary/40 rounded-[2px]" />
               </span>
-              GK Ice Cube Co.
+              GK Ice Cube
             </Link>
             
             <nav className="hidden md:flex items-center gap-6">
@@ -37,6 +36,7 @@ export default function Navbar() {
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               >
                 Home
+                <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-primary scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100 group-[.active]:scale-x-100" />
               </NavLink>
               <NavLink 
                 to="/order" 
@@ -44,9 +44,11 @@ export default function Navbar() {
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               >
                 Order Now
+                <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-primary scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100 group-[.active]:scale-x-100" />
               </NavLink>
               <a href="/#contact" className={navLinkClass({isActive: false})}>
                 Contact
+                <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-primary scale-x-0 transition-transform duration-300 origin-left group-hover:scale-x-100" />
               </a>
             </nav>
           </div>

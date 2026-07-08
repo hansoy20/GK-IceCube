@@ -15,7 +15,6 @@ async function testPlaceOrder() {
         customerName: "Test Name",
         customerEmail: "test@example.com",
         deliveryLine1: "123 Test St",
-        deliveryCity: "Test City",
         contactPhone: "1234567890",
         paymentMethod: "COD",
         requestedDeliveryDate: "2026-07-08T15:30",

@@ -15,13 +15,10 @@ export default function OrderNow() {
     customerName: "",
     customerEmail: "",
     deliveryLine1: "",
-    deliveryLine2: "",
-    deliveryCity: "",
-    deliveryRegion: "",
-    deliveryPostal: "",
     contactPhone: "",
     orderNotes: "",
     requestedDeliveryDate: "",
+    requestedDeliveryTime: "",
     paymentMethod: "COD",
   });
   const [submitting, setSubmitting] = useState(false);
@@ -90,13 +87,13 @@ export default function OrderNow() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-14">
-      <h1 className="font-display text-2xl font-bold text-slate-800">Order Now</h1>
+      <h1 className="font-heading text-2xl font-bold text-neutral-heading">Order Now</h1>
 
       <form onSubmit={handleSubmit} className="mt-8 grid grid-cols-1 gap-8 md:grid-cols-3">
         <div className="space-y-4 md:col-span-2">
           
-          <div className="ice-tile p-6 mb-8 border border-primary/20 bg-primary/5">
-            <h2 className="font-display text-lg font-bold text-primary mb-4">Ice Quantity</h2>
+          <div className="bg-primary-light/20 rounded-2xl p-6 mb-8 border border-white/10">
+            <h2 className="font-heading text-lg font-bold text-secondary-dark mb-4">Ice Quantity</h2>
             <div>
               <label className="text-sm font-bold text-slate-700">How many kilograms of {product.name}?</label>
               <div className="mt-2 flex items-center gap-4">
@@ -108,7 +105,7 @@ export default function OrderNow() {
                   max={product.stockKg}
                   value={quantityKg}
                   onChange={(e) => setQuantityKg(parseFloat(e.target.value) || 0)}
-                  className="w-32 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 shadow-sm"
+                  className="w-32 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-black focus:ring-1 focus:ring-black"
                 />
                 <span className="text-sm font-bold text-slate-500">kg</span>
               </div>
@@ -123,7 +120,7 @@ export default function OrderNow() {
                 required
                 value={form.customerName}
                 onChange={update("customerName")}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 shadow-sm"
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-black focus:ring-1 focus:ring-black"
                 placeholder="Juan Dela Cruz"
               />
             </div>
@@ -134,7 +131,7 @@ export default function OrderNow() {
                 type="email"
                 value={form.customerEmail}
                 onChange={update("customerEmail")}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 shadow-sm"
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-black focus:ring-1 focus:ring-black"
                 placeholder="juan@example.com"
               />
             </div>
@@ -146,70 +143,41 @@ export default function OrderNow() {
               required
               value={form.deliveryLine1}
               onChange={update("deliveryLine1")}
-              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 shadow-sm"
+              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-black focus:ring-1 focus:ring-black"
               placeholder="123 Frost Avenue"
             />
           </div>
 
+
+
           <div>
-            <label className="text-sm font-bold text-slate-500">Address line 2 (optional)</label>
-            <input
-              value={form.deliveryLine2}
-              onChange={update("deliveryLine2")}
-              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 shadow-sm"
-              placeholder="Unit, suite, etc."
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-bold text-slate-500">City</label>
-              <input
-                required
-                value={form.deliveryCity}
-                onChange={update("deliveryCity")}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 shadow-sm"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-bold text-slate-500">Region / State</label>
-              <input
-                value={form.deliveryRegion}
-                onChange={update("deliveryRegion")}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 shadow-sm"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-sm font-bold text-slate-500">Postal code</label>
-              <input
-                value={form.deliveryPostal}
-                onChange={update("deliveryPostal")}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 shadow-sm"
-              />
-            </div>
-            <div>
               <label className="text-sm font-bold text-slate-500">Contact phone</label>
               <input
                 required
                 value={form.contactPhone}
                 onChange={update("contactPhone")}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 shadow-sm"
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-black focus:ring-1 focus:ring-black"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-bold text-slate-500">Requested delivery date & time (optional)</label>
+              <label className="text-sm font-bold text-slate-500">Requested delivery date (optional)</label>
               <input
-                type="datetime-local"
-                min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                type="date"
+                min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10)}
                 value={form.requestedDeliveryDate}
                 onChange={update("requestedDeliveryDate")}
-                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 shadow-sm"
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-black focus:ring-1 focus:ring-black"
+              />
+            </div>
+            <div>
+              <label className="text-sm font-bold text-slate-500">Requested delivery time (optional)</label>
+              <input
+                type="time"
+                value={form.requestedDeliveryTime}
+                onChange={update("requestedDeliveryTime")}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-black focus:ring-1 focus:ring-black"
               />
             </div>
           </div>
@@ -220,7 +188,7 @@ export default function OrderNow() {
               value={form.orderNotes}
               onChange={update("orderNotes")}
               rows={2}
-              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500 shadow-sm"
+              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-slate-800 outline-none focus:border-black focus:ring-1 focus:ring-black"
               placeholder="Gate code, preferred time window, etc."
             />
           </div>
@@ -240,8 +208,8 @@ export default function OrderNow() {
           {error && <p className="text-red-500 font-medium">{error}</p>}
         </div>
 
-        <div className="ice-tile h-fit p-6">
-          <h2 className="font-display text-lg font-bold text-slate-800">Order summary</h2>
+        <div className="bg-primary-light rounded-2xl h-fit p-6 border border-white/10">
+          <h2 className="font-heading text-lg font-bold text-secondary-dark">Order summary</h2>
           <div className="mt-4 space-y-2 text-sm">
               <div className="flex justify-between font-500 text-slate-500">
                 <p className="text-sm font-bold text-slate-800">
@@ -268,7 +236,7 @@ export default function OrderNow() {
           <button
             type="submit"
             disabled={submitting}
-            className="mt-6 w-full rounded-lg bg-sky-500 py-3 font-bold text-white shadow-sm hover:bg-sky-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="mt-6 w-full rounded-lg bg-primary py-3 font-bold text-white hover:bg-primary-dark hover:shadow-md transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {submitting ? "Placing order..." : "Place order"}
           </button>

@@ -73,8 +73,6 @@ export default function OrderConfirmation() {
         <h2 className="font-display text-lg font-bold text-slate-800">Delivering to</h2>
         <p className="mt-2 text-sm font-500 text-slate-500">
           {order.deliveryLine1}
-          {order.deliveryLine2 ? `, ${order.deliveryLine2}` : ""}, {order.deliveryCity}
-          {order.deliveryRegion ? `, ${order.deliveryRegion}` : ""} {order.deliveryPostal || ""}
         </p>
         <p className="mt-1 text-sm font-500 text-slate-500">Contact: <span className="font-bold text-slate-700">{order.contactPhone}</span></p>
         <p className="mt-3 text-sm font-500 text-slate-400">
