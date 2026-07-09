@@ -146,8 +146,8 @@ const createOrder = asyncHandler(async (req, res) => {
     });
   });
 
-  // Secondary sync (does not block checkout if it fails)
-  appendOrderToSheet(order);
+  // Secondary sync (does not block checkout if it fails because it catches its own errors internally)
+  await appendOrderToSheet(order);
 
   res.status(201).json(order);
 });
